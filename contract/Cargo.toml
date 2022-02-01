@@ -1,7 +1,7 @@
 [package]
-name = "metadd"
+name = "metaads"
 version = "0.1.0"
-authors = ["Meta Add"]
+authors = ["MetaAds"]
 edition = "2018"
 
 [lib]

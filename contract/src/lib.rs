@@ -37,14 +37,14 @@ type Slots = UnorderedMap<u64, Slot>;
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
-pub struct MetaAddContract {
+pub struct MetaAdsContract {
     units: Units,
     slots: Slots,
     max_unit_id: u64,
     max_slot_id: u64,
 }
 
-impl Default for MetaAddContract {
+impl Default for MetaAdsContract {
     fn default() -> Self {
         assert!(!env::state_exists(), "The contract is already initialized");
         Self {
@@ -58,7 +58,7 @@ impl Default for MetaAddContract {
 
 
 #[near_bindgen]
-impl MetaAddContract {
+impl MetaAdsContract {
     pub fn make_unit(&mut self, name: String, content: String) -> Unit {
     
         assert!(name != "", "Abort. Name is empty");

@@ -1,4 +1,4 @@
-metadd Smart Contract
+Meta Ads Smart Contract
 ==================
 
 A [smart contract] written in [Rust] for an app initialized with [create-near-app]

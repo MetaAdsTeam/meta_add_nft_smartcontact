@@ -1,4 +1,4 @@
-Meta Ad
+Meta Ads
 ==================
 
 This app was initialized with [create-near-app]
@@ -43,7 +43,7 @@ Ensure that it's installed with `near --version` (or `npx near --version`)
 Step 1: Create an account for the contract
 ------------------------------------------
 
-Each account on NEAR can have at most one contract deployed to it. If you've already created an account such as `your-name.testnet`, you can deploy your contract to `metadd.your-name.testnet`. Assuming you've already created an account on [NEAR Wallet], here's how to create `metadd.your-name.testnet`:
+Each account on NEAR can have at most one contract deployed to it. If you've already created an account such as `your-name.testnet`, you can deploy your contract to `metaads.your-name.testnet`. Assuming you've already created an account on [NEAR Wallet], here's how to create `metaads.your-name.testnet`:
 
 1. Authorize NEAR CLI, following the commands it gives you:
 
@@ -51,13 +51,13 @@ Each account on NEAR can have at most one contract deployed to it. If you've alr
 
 2. Create a subaccount (replace `YOUR-NAME` below with your actual account name):
 
-      near create-account metadd.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
+      near create-account metaads.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
 
 
 Step 2: set contract to account
 ---------------------------------
 
-      near deploy metadd.YOUR-NAME.testnet --wasmFile=./out/main.wasm --accountId metadd.YOUR-NAME.testnet
+      near deploy metaads.YOUR-NAME.testnet --wasmFile=./out/main.wasm --accountId metaads.YOUR-NAME.testnet
    
 
 Troubleshooting
