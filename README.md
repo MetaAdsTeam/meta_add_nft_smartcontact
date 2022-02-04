@@ -40,10 +40,10 @@ Or, if you'd rather use the locally-installed version, you can prefix all `near`
 Ensure that it's installed with `near --version` (or `npx near --version`)
 
 
-Step 1: Create an account for the contract
+Step 1: Create an account for the contracts
 ------------------------------------------
 
-Each account on NEAR can have at most one contract deployed to it. If you've already created an account such as `your-name.testnet`, you can deploy your contract to `metaads.your-name.testnet`. Assuming you've already created an account on [NEAR Wallet], here's how to create `metaads.your-name.testnet`:
+Each account on NEAR can have at most one contract deployed to it. If you've already created an account such as `your-name.testnet`, you can deploy your contract to `subaccount.your-name.testnet`. Assuming you've already created an account on [NEAR Wallet], here's how to create `subaccount.your-name.testnet`:
 
 1. Authorize NEAR CLI, following the commands it gives you:
 
@@ -51,14 +51,44 @@ Each account on NEAR can have at most one contract deployed to it. If you've alr
 
 2. Create a subaccount (replace `YOUR-NAME` below with your actual account name):
 
-      near create-account metaads.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
+      near create-account subaccount.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
 
+3. Set contract to subaccount
 
-Step 2: set contract to account
----------------------------------
+      near deploy --accountId subaccount.YOUR-NAME.testnet --wasmFile=./out/main.wasm 
 
-      near deploy metaads.YOUR-NAME.testnet --wasmFile=./out/main.wasm --accountId metaads.YOUR-NAME.testnet
-   
+4. Create a subaccount for NFT contract (replace `YOUR-NAME` below with your actual account name):
+
+      near create-account nft.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
+
+5. Set NFT contract to subaccount
+
+      near deploy --accountId nft.YOUR-NAME.testnet  --wasmFile=./out/nft_contract.wasm
+
+6. Initialize NFT contract
+
+      near call nft.YOUR-NAME.testnet new_default_meta '{"owner_id": "nft.YOUR-NAME.testnet"}' --accountId nft.YOUR-NAME.testnet
+
+7. View Contracts Meta Data
+
+      near view nft.YOUR-NAME.testnet nft_metadata
+
+8. Minting Token
+
+      near call nft.YOUR-NAME.testnet nft_mint '{"token_id": "token-1", "metadata": {"title": "Test Token 1", "description": "Test Token", "media": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gif"}, "receiver_id": "YOUR-NAME.testnet", "webdata": {"uri":"https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gif"}}' --accountId YOUR-NAME.testnet --amount 0.1
+
+9. View NFT Information
+
+      near view nft.YOUR-NAME.testnet nft_token '{"token_id": "token-1"}'
+
+10. Get the total supply of NFTs for a given owner
+
+      near view nft.YOUR-NAME.testnet nft_supply_for_owner '{"account_id": "OWNER-NAME.testnet"}'
+
+11. Get all tokens for an owner 
+
+      near view nft.YOUR-NAME.testnet nft_tokens_for_owner '{"account_id": "OWNER-NAME.testnet", "limit": $limit}'
+
 
 Troubleshooting
 ===============
