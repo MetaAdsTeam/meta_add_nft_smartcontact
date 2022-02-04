@@ -21,6 +21,12 @@ pub struct NFTContractMetadata {
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
+pub struct TokenWebdata {
+    pub uri: Option<String>, // URL to associated ipfs
+}
+
+#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
+#[serde(crate = "near_sdk::serde")]
 pub struct TokenMetadata {
     pub title: Option<String>, // ex. "Arch Nemesis: Mail Carrier" or "Parcel #5055"
     pub description: Option<String>, // free-form description
@@ -34,12 +40,6 @@ pub struct TokenMetadata {
     pub extra: Option<String>, // anything extra the NFT wants to store on-chain. Can be stringified JSON.
     pub reference: Option<String>, // URL to an off-chain JSON file with more info.
     pub reference_hash: Option<Base64VecU8>, // Base64-encoded sha256 hash of JSON from reference field. Required if `reference` is included.
-}
-
-#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
-#[serde(crate = "near_sdk::serde")]
-pub struct TokenWebdata {
-    pub uri: Option<String>, // URL to associated ipfs
 }
 
 #[derive(BorshDeserialize, BorshSerialize)]
@@ -64,7 +64,8 @@ pub struct JsonToken {
     pub owner_id: AccountId,
     //token metadata
     pub metadata: TokenMetadata,
-    pub webdata: TokenWebdata,
+    //token webdata
+    pub webdata: Option<TokenWebdata>,
     //list of approved account IDs that have access to transfer the token. This maps an account ID to an approval ID
     pub approved_account_ids: HashMap<AccountId, u64>,
     //keep track of the royalty percentages for the token in a hash map

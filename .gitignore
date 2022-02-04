@@ -17,6 +17,9 @@
 /contract/target
 /contract/Cargo.lock
 
+/nft-contract/target
+/nft-contract/Cargo.lock
+
 # misc
 .DS_Store
 .env.local

@@ -199,11 +199,18 @@ impl NonFungibleTokenCore for Contract {
         if let Some(token) = self.tokens_by_id.get(&token_id) {
             //we'll get the metadata for that token
             let metadata = self.token_metadata_by_id.get(&token_id).unwrap();
+
+            let webdata = match self.token_webdata_by_id.get(&token_id) {
+                Some(webdata) => Some(webdata),
+                None => None,
+            };
+
             //we return the JsonToken (wrapped by Some since we return an option)
             Some(JsonToken {
                 token_id,
                 owner_id: token.owner_id,
                 metadata,
+                webdata,
                 approved_account_ids: token.approved_account_ids,
                 royalty: token.royalty,
             })

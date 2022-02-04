@@ -7,8 +7,8 @@ impl Contract {
         &mut self,
         token_id: TokenId,
         metadata: TokenMetadata,
-        webdata: TokenWebdata,
         receiver_id: AccountId,
+        webdata: Option<TokenWebdata>,
         //we add an optional parameter for perpetual royalties
         perpetual_royalties: Option<HashMap<AccountId, u32>>,
     ) {
@@ -49,6 +49,11 @@ impl Contract {
 
         //insert the token ID and metadata
         self.token_metadata_by_id.insert(&token_id, &metadata);
+
+        if let Some(webdata) = webdata {
+            //insert the token ID and webdata
+            self.token_webdata_by_id.insert(&token_id, &webdata);
+        }
 
         //call the internal method for adding the token to the owner
         self.internal_add_token_to_owner(&token.owner_id, &token_id);
