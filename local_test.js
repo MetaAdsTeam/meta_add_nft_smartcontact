@@ -8,6 +8,15 @@ const CONTRACT_NAME = process.env.CONTRACT_NAME ||'metaads.test.near'
 
 function getConfig(env) {
   switch (env) {
+  case 'testnet':
+    return {
+      networkId: 'testnet',
+      nodeUrl: 'https://rpc.testnet.near.org',
+      contractName: CONTRACT_NAME,
+      walletUrl: 'https://wallet.testnet.near.org',
+      helperUrl: 'https://helper.testnet.near.org',
+      explorerUrl: 'https://explorer.testnet.near.org',
+    }
   case "local":
     return {
       networkId: process.env.NEAR_CLI_LOCALNET_NETWORK_ID || 'local',
@@ -44,6 +53,7 @@ let keyStore;
 let near;
 let adUseContract;
 let pubUseContract;
+let contractAccount;
 
 async function initNear() {
   config = getConfig(process.env.NEAR_ENV || "local");
@@ -111,16 +121,31 @@ async function initTest() {
 
   try {
     let account = new nearAPI.Account(near.connection, config.contractAccount);
+    keyStore.setKey(config.networkId, config.contractAccount, masterKey);
     const response = await account.state();
     console.log("Gets the state for " + config.contractAccount); 
     console.log(response); 
+
+    contractAccount = new nearAPI.Contract(
+      account,
+      config.contractAccount,
+      contractMethods
+    );
+
   } catch (err) {
     const contract = await fs.readFile("./out/main.wasm");
-    const _contractAccount = await masterAccount.createAndDeployContract(
+    let account = await masterAccount.createAndDeployContract(
       config.contractAccount,
       pubKey,
       contract,
       new BN(10).pow(new BN(25))
+    );
+    keyStore.setKey(config.networkId, config.contractAccount, masterKey);
+
+    contractAccount = new nearAPI.Contract(
+      account,
+      config.contractAccount,
+      contractMethods
     );
     console.log("Created account and deploy smart contract");
   }
@@ -192,10 +217,13 @@ async function testTakeSlot(unit) {
 }
 
 async function testTransferFund(slot) {
-  let result = await  masterAccountContract.transfer_funds({ args: { slot_id: slot.record_id}});
+  let result = await contractAccount.transfer_funds({ args: { slot_id: slot.record_id}});
   assert(result, 'Transfer not completed');
 
   console.log("Transfer completed");
+
+  await adUseContract.transfer_funds({ args: { slot_id: slot.record_id}});
+
 }
 
 async function test() {
