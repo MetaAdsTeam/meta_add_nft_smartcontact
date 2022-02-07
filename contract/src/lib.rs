@@ -9,7 +9,7 @@ const MIN_DEPOSIT: Balance = 1_000_000_000_000_000_000_000;
 
 setup_alloc!();
 
-#[derive(Debug, Clone, BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
+#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Unit {
     pub record_id: u64,
@@ -18,7 +18,7 @@ pub struct Unit {
     pub owner_account_id: AccountId,
 }
 
-#[derive(Debug, Clone, BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
+#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Slot {
     pub record_id: u64,
@@ -38,10 +38,10 @@ type Slots = UnorderedMap<u64, Slot>;
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct MetaAdsContract {
-    units: Units,
-    slots: Slots,
-    max_unit_id: u64,
-    max_slot_id: u64,
+    pub units: Units,
+    pub slots: Slots,
+    pub max_unit_id: u64,
+    pub max_slot_id: u64,
 }
 
 impl Default for MetaAdsContract {
@@ -130,10 +130,11 @@ impl MetaAdsContract {
         }
     }
 
+    #[private]
     pub fn transfer_funds(&mut self, slot_id: u64) -> bool {
         
         assert!(slot_id > 0, "Abort. Slot Id undefined");
-        
+
         match self.slots.get(&slot_id) {
             Some(mut slot) => {
                 
