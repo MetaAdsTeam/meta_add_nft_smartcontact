@@ -13,21 +13,50 @@ Before you compile this code, you will need to install Rust with [correct target
 Exploring The Code
 ==================
 
-1. The main smart contract code lives in `src/lib.rs`. You can compile it with
-   the `./compile` script.
-2. Tests: You can run smart contract tests with the `./test` script. This runs
-   standard Rust tests using [cargo] with a `--nocapture` flag so that you
-   can see any debug info you print to the console.
+ - The main smart contract code lives in `src/lib.rs`. You can compile it with
+   the `./compile` or `./build.sh` script.
 
 
 How to deploy
 ==================
 
-- Create & deploy smart contract (`/contract`)
+Each account on NEAR can have at most one contract deployed to it. If you've already created an account such as ` YOUR-NAME.testnet`, you can deploy your contract to `subaccount.YOUR-NAME.testnet`. Assuming you've already created an account on [NEAR Wallet], here's how to create `subaccount.YOUR-NAME.testnet`:
 
-`yarn build:contract`
+- Authorize NEAR CLI, following the commands it gives you:
 
-`near deploy $ACCOUNT_ID --wasmFile=./out/main.wasm --accountId $ACCOUNT_ID` 
+      `near login`
+
+- Create a subaccount (replace `YOUR-NAME` below with your actual account name):
+
+      `near create-account subaccount.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet`
+
+- Set contract to subaccount
+
+      `near deploy --accountId subaccount.YOUR-NAME.testnet --wasmFile=./out/main.wasm `
+
+
+Examples
+==================
+
+- Create Ad Unit
+
+   `near call subaccount.YOUR-NAME.testnet make_unit '{"name": "Ad Unit", "content": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gi"}' --accountId YOUR-NAME.testnet`
+
+- Get a collection of units
+
+   `near view subaccount.YOUR-NAME.testnet fetch_all_units`
+
+- Get a unit by id
+
+   `near view subaccount.YOUR-NAME.testnet fetch_unit_by_id '{"id": $id}'`
+
+- Create Slot
+
+   `near call subaccount.YOUR-NAME.testnet take_slot '{"space_id": $sid, "unit_id": $uid, "start_time": $s_time, "end_time": $e_time, "publisher_id": "'$PublisherAccountId'"}' --accountId  YOUR-NAME.testnet --amount 0.1`
+
+- Transfer Funds
+
+   `near call subaccount.YOUR-NAME.testnet transfer_funds '{"slot_id": $sid}' --accountId  YOUR-NAME.testnet`
 
 
   [smart contract]: https://docs.near.org/docs/develop/contracts/overview
