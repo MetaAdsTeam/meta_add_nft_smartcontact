@@ -40,23 +40,23 @@ Examples
 
 - Create Ad Unit
 
-   `near call subaccount.YOUR-NAME.testnet make_unit '{"name": "Ad Unit", "content": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gi"}' --accountId YOUR-NAME.testnet`
+   `near call subaccount.YOUR-NAME.testnet make_creative '{"name": "Ad Unit", "content": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gi"}' --accountId YOUR-NAME.testnet`
 
 - Get a collection of units
 
-   `near view subaccount.YOUR-NAME.testnet fetch_all_units`
+   `near view subaccount.YOUR-NAME.testnet fetch_all_creatives`
 
 - Get a unit by id
 
-   `near view subaccount.YOUR-NAME.testnet fetch_unit_by_id '{"id": $id}'`
+   `near view subaccount.YOUR-NAME.testnet fetch_creative_by_id '{"id": $id}'`
 
 - Create Slot
 
-   `near call subaccount.YOUR-NAME.testnet take_slot '{"space_id": $sid, "unit_id": $uid, "start_time": $s_time, "end_time": $e_time, "publisher_id": "'$PublisherAccountId'"}' --accountId  YOUR-NAME.testnet --amount 0.1`
+   `near call subaccount.YOUR-NAME.testnet do_agreement '{"adspace_id": $sid, "creative_id": $сid, "start_time": $s_time, "end_time": $e_time, "publisher_id": "'$PublisherAccountId'"}' --accountId  YOUR-NAME.testnet --amount 0.1`
 
 - Transfer Funds
 
-   `near call subaccount.YOUR-NAME.testnet transfer_funds '{"slot_id": $sid}' --accountId  YOUR-NAME.testnet`
+   `near call subaccount.YOUR-NAME.testnet transfer_funds '{"presentation_id": $sid}' --accountId  YOUR-NAME.testnet`
 
 
   [smart contract]: https://docs.near.org/docs/develop/contracts/overview

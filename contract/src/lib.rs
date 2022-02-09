@@ -11,7 +11,7 @@ setup_alloc!();
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
-pub struct Unit {
+pub struct Creative {
     pub record_id: u64,
     pub name: String,
     pub content: String,
@@ -20,38 +20,45 @@ pub struct Unit {
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
-pub struct Slot {
+pub struct Presentation {
     pub record_id: u64,
-    pub space_id: u64,
-    pub unit_id: u64,
-    pub amount: Balance,
+    pub adspace_id: u64,
+    pub creative_id: u64,
+    pub advertiser_cost : Balance,
     pub start_time: Timestamp,
     pub end_time: Timestamp,
     pub transfered: bool,
     pub advertiser_account_id: AccountId,
     pub publisher_account_id: AccountId,
+    pub ad_space_name: Option<String>,
+    pub publisher_earn: Option<u64>,
+    pub creative_ref: Option<String>,
+    pub show_kind: Option<String>,
+    pub entertainment: String,
+    pub entertainment_fee: Balance,
+    pub status: String,
 }
 
-type Units = UnorderedMap<u64, Unit>;
-type Slots = UnorderedMap<u64, Slot>;
+type Creatives = UnorderedMap<u64, Creative>;
+type Presentations = UnorderedMap<u64, Presentation>;
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct MetaAdsContract {
-    pub units: Units,
-    pub slots: Slots,
-    pub max_unit_id: u64,
-    pub max_slot_id: u64,
+    pub creatives: Creatives,
+    pub presentations: Presentations,
+    pub max_creative_id: u64,
+    pub max_presentation_id: u64,
 }
 
 impl Default for MetaAdsContract {
     fn default() -> Self {
         assert!(!env::state_exists(), "The contract is already initialized");
         Self {
-            units: UnorderedMap::new(b"u".to_vec()),
-            slots: UnorderedMap::new(b"s".to_vec()),
-            max_unit_id: 0,
-            max_slot_id: 0,
+            creatives: UnorderedMap::new(b"c".to_vec()),
+            presentations: UnorderedMap::new(b"p".to_vec()),
+            max_creative_id: 0,
+            max_presentation_id: 0,
         }
     }
 }
@@ -59,35 +66,46 @@ impl Default for MetaAdsContract {
 
 #[near_bindgen]
 impl MetaAdsContract {
-    pub fn make_unit(&mut self, name: String, content: String) -> Unit {
+    pub fn make_creative(&mut self, name: String, content: String) -> Creative {
     
         assert!(name != "", "Abort. Name is empty");
         assert!(name.len() <= 100, "Abort. Name is longer then 100 characters");
         assert!(content != "", "Abort. Content is empty");
 
         let owner_account_id: AccountId = env::predecessor_account_id();
-        self.max_unit_id += 1;
-        let record_id = self.max_unit_id;
-        let unit = Unit {
+        self.max_creative_id += 1;
+        let record_id = self.max_creative_id;
+        let creative = Creative {
             record_id,
             name,
             content,
             owner_account_id,
         };
 
-        self.units.insert(
+        self.creatives.insert(
             &record_id,
-            &unit,
+            &creative,
         );
 
-        unit
+        creative
     }
 
     #[payable]
-    pub fn take_slot(&mut self, space_id: u64, unit_id: u64, start_time: Timestamp, end_time: Timestamp, publisher_id: AccountId) -> Option<Slot> {
+    pub fn do_agreement(
+        &mut self, 
+        adspace_id: u64, 
+        creative_id: u64,  
+        start_time: Timestamp, 
+        end_time: Timestamp, 
+        publisher_id: AccountId, 
+        ad_space_name: Option<String>,
+        creative_ref: Option<String>, 
+        publisher_earn: Option<u64>, 
+        show_kind: Option<String>, 
+    ) -> Option<Presentation> {
         
-        assert!(space_id > 0, "Abort. Space Id undefined");
-        assert!(unit_id > 0, "Abort. Unit Id undefined");
+        assert!(adspace_id > 0, "Abort. Space Id undefined");
+        assert!(creative_id > 0, "Abort. Creative Id undefined");
 
         let time: u64 = env::block_timestamp() / 1000000000;
         assert!(start_time >= time, "Abort. Start time is less than current");
@@ -98,63 +116,70 @@ impl MetaAdsContract {
         let deposit: Balance = env::attached_deposit();
         assert!(deposit >= MIN_DEPOSIT, "Deposit is too small. Attached: {}, Required: {}", deposit, MIN_DEPOSIT);
 
-        match self.units.get(&unit_id) {
-            Some(_unit) => {
+        match self.creatives.get(&creative_id) {
+            Some(_creative) => {
                 
                 let advertiser_account_id = env::predecessor_account_id();
-                let owner_account_id = _unit.owner_account_id.clone();
-                assert_eq!(owner_account_id, advertiser_account_id, "Abort. Unit not available. Wrong account");
+                let owner_account_id = _creative.owner_account_id.clone();
+                assert_eq!(owner_account_id, advertiser_account_id, "Abort. Creative not available. Wrong account");
+
+                let fee = deposit / 10;
                 
-                self.max_slot_id += 1;
-                let record_id = self.max_slot_id;
-                let slot = Slot {
+                self.max_presentation_id += 1;
+                let record_id = self.max_presentation_id;
+                let presentation = Presentation {
                     record_id,
-                    space_id,
-                    unit_id,
-                    amount: deposit.into(),
+                    adspace_id,
+                    creative_id,
+                    advertiser_cost: deposit.into(),
                     start_time,
                     end_time,
                     transfered: false,
                     advertiser_account_id: advertiser_account_id.clone(),
                     publisher_account_id: publisher_id,
+                    ad_space_name,
+                    publisher_earn,
+                    creative_ref,
+                    show_kind,
+                    entertainment: env::current_account_id(),
+                    entertainment_fee: fee,
+                    status: String::from("signed")
                 };
                 
-                self.slots.insert(
+                self.presentations.insert(
                     &record_id,
-                    &slot,
+                    &presentation,
                 );
                 
-                Some(slot)
+                Some(presentation)
             }
             None => None
         }
     }
 
     #[private]
-    pub fn transfer_funds(&mut self, slot_id: u64) -> bool {
+    pub fn transfer_funds(&mut self, presentation_id: u64) -> bool {
         
-        assert!(slot_id > 0, "Abort. Slot Id undefined");
+        assert!(presentation_id > 0, "Abort. Presentation Id undefined");
 
-        match self.slots.get(&slot_id) {
-            Some(mut slot) => {
+        match self.presentations.get(&presentation_id) {
+            Some(mut presentation) => {
                 
-                assert!(slot.transfered == false, "Abort. Transfer funds");
+                assert!(presentation.transfered == false, "Abort. Transfer funds");
 
                 let time: u64 = env::block_timestamp() / 1000000000;
-                assert!(slot.end_time <= time, "Abort. Slot is active. Show time is not over yet");
-
-                let amount = slot.amount;
-                let fee = amount / 10;
+                assert!(presentation.end_time <= time, "Abort. Presentation is active. Show time is not over yet");
         
-                let total_funds: Balance = amount - fee;
-                let account_id = slot.publisher_account_id.clone();
+                let total_funds: Balance = presentation.advertiser_cost - presentation.entertainment_fee;
+                let account_id = presentation.publisher_account_id.clone();
         
                 Promise::new(account_id.clone()).transfer(total_funds);
                 
-                log!("Publisher is {}. transferred funds: {}", account_id.clone(), total_funds);
+                log!("The publisher {} received funds in the amount of {}", account_id.clone(), total_funds);
 
-                slot.transfered = true;
-                self.slots.insert(&slot_id, &slot);
+                presentation.transfered = true;
+                presentation.status = String::from("success");
+                self.presentations.insert(&presentation_id, &presentation);
                 
                 true
             }
@@ -164,20 +189,20 @@ impl MetaAdsContract {
         }
     }
 
-    pub fn fetch_all_units(&self) -> HashMap<u64, Unit> {
-        self.units.iter().collect()
+    pub fn fetch_all_creatives(&self) -> HashMap<u64, Creative> {
+        self.creatives.iter().collect()
     }
 
-    pub fn fetch_unit_by_id(&self, id: u64) -> Unit {
-        self.units.get(&id).expect("Unit not found")
+    pub fn fetch_creative_by_id(&self, id: u64) -> Creative {
+        self.creatives.get(&id).expect("Creative not found")
     }
 
-    pub fn fetch_all_slots(&self) -> HashMap<u64, Slot> {
-        self.slots.iter().collect()
+    pub fn fetch_all_presentations(&self) -> HashMap<u64, Presentation> {
+        self.presentations.iter().collect()
     }
 
-    pub fn fetch_slot_by_id(&self, id: u64) -> Slot {
-        self.slots.get(&id).expect("Slot not found")
+    pub fn fetch_presentation_by_id(&self, id: u64) -> Presentation {
+        self.presentations.get(&id).expect("Presentation not found")
     }
 }
 
