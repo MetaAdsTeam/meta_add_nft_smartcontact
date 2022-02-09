@@ -38,23 +38,23 @@ Each account on NEAR can have at most one contract deployed to it. If you've alr
 Examples
 ==================
 
-- Create Ad Unit
+- Create creative
 
-   `near call subaccount.YOUR-NAME.testnet make_creative '{"name": "Ad Unit", "content": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gi"}' --accountId YOUR-NAME.testnet`
+   `near call subaccount.YOUR-NAME.testnet make_creative '{"name": "My Creative", "content": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gi"}' --accountId YOUR-NAME.testnet`
 
-- Get a collection of units
+- Get a collection of creatives
 
    `near view subaccount.YOUR-NAME.testnet fetch_all_creatives`
 
-- Get a unit by id
+- Get a creative by id
 
    `near view subaccount.YOUR-NAME.testnet fetch_creative_by_id '{"id": $id}'`
 
-- Create Slot
+- Init presentation your creative
 
    `near call subaccount.YOUR-NAME.testnet do_agreement '{"adspace_id": $sid, "creative_id": $сid, "start_time": $s_time, "end_time": $e_time, "publisher_id": "'$PublisherAccountId'"}' --accountId  YOUR-NAME.testnet --amount 0.1`
 
-- Transfer Funds
+- Transfer of funds to the publisher for presentation
 
    `near call subaccount.YOUR-NAME.testnet transfer_funds '{"presentation_id": $sid}' --accountId  YOUR-NAME.testnet`
 
