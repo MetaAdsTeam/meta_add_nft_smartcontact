@@ -40,7 +40,7 @@ Examples
 
 - Add creative
 
-   `near call subaccount.YOUR-NAME.testnet make_creative '{"name": "My Creative", "content": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gi"}' --accountId YOUR-NAME.testnet`
+   `near call subaccount.YOUR-NAME.testnet make_creative '{"name": "My Creative", "content": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gi", "nft_cid": $cid}' --accountId YOUR-NAME.testnet`
 
 - Get a collection of creatives
 
@@ -56,7 +56,7 @@ Examples
 
 - Transfer of funds to the publisher for presentation
 
-   `near call subaccount.YOUR-NAME.testnet transfer_funds '{"presentation_id": $sid}' --accountId  subaccount.YOUR-NAME.testnet`
+   `near call subaccount.YOUR-NAME.testnet transfer_funds '{"presentation_id": $pid}' --accountId  subaccount.YOUR-NAME.testnet`
 
 
   [smart contract]: https://docs.near.org/docs/develop/contracts/overview

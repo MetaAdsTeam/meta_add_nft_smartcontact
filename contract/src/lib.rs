@@ -15,6 +15,7 @@ pub struct Creative {
     pub record_id: u64,
     pub name: String,
     pub content: String,
+    pub nft_cid: Option<String>,
     pub owner_account_id: AccountId,
 }
 
@@ -66,7 +67,7 @@ impl Default for MetaAdsContract {
 
 #[near_bindgen]
 impl MetaAdsContract {
-    pub fn make_creative(&mut self, name: String, content: String) -> Creative {
+    pub fn make_creative(&mut self, name: String, content: String, nft_cid: Option<String>) -> Creative {
     
         assert!(name != "", "Abort. Name is empty");
         assert!(name.len() <= 100, "Abort. Name is longer then 100 characters");
@@ -79,6 +80,7 @@ impl MetaAdsContract {
             record_id,
             name,
             content,
+            nft_cid,
             owner_account_id,
         };
 
