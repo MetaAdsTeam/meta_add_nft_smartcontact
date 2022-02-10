@@ -70,7 +70,7 @@ impl MetaAdsContract {
     pub fn make_creative(&mut self, name: String, content: String, nft_cid: Option<String>) -> Creative {
     
         assert!(name != "", "Abort. Name is empty");
-        assert!(name.len() <= 100, "Abort. Name is longer then 100 characters");
+        assert!(name.len() <= 100, "Abort. Name is longer than 100 characters");
         assert!(content != "", "Abort. Content is empty");
 
         let owner_account_id: AccountId = env::predecessor_account_id();
@@ -110,8 +110,8 @@ impl MetaAdsContract {
         assert!(creative_id > 0, "Abort. Creative Id undefined");
 
         let time: u64 = env::block_timestamp() / 1000000000;
-        assert!(start_time >= time, "Abort. Start time is less than current");
-        assert!(end_time > time, "Abort. End time is less than current");
+        assert!(start_time >= time, "Abort. Start time is less than current time");
+        assert!(end_time > time, "Abort. End time is less than current time");
         assert!(end_time > start_time, "Abort. Start time must be less than End time");
         assert!(publisher_id != "", "Abort. Publisher is empty");
 
