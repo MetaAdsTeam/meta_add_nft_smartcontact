@@ -13,6 +13,7 @@ setup_alloc!();
 #[serde(crate = "near_sdk::serde")]
 pub struct Creative {
     pub record_id: u64,
+    pub creative_ref: u64,
     pub name: String,
     pub content: String,
     pub nft_cid: Option<String>,
@@ -33,21 +34,18 @@ pub struct Presentation {
     pub publisher_account_id: AccountId,
     pub ad_space_name: Option<String>,
     pub publisher_earn: Option<u64>,
-    pub creative_ref: Option<String>,
+    pub creative_ref: Option<u64>,
     pub show_kind: Option<String>,
     pub entertainment: String,
     pub entertainment_fee: Balance,
     pub status: String,
 }
 
-type Creatives = UnorderedMap<u64, Creative>;
-type Presentations = UnorderedMap<u64, Presentation>;
-
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct MetaAdsContract {
-    pub creatives: Creatives,
-    pub presentations: Presentations,
+    pub creatives: UnorderedMap<u64, Creative>,
+    pub presentations: UnorderedMap<u64, Presentation>,
     pub max_creative_id: u64,
     pub max_presentation_id: u64,
 }
@@ -67,7 +65,7 @@ impl Default for MetaAdsContract {
 
 #[near_bindgen]
 impl MetaAdsContract {
-    pub fn make_creative(&mut self, name: String, content: String, nft_cid: Option<String>) -> Creative {
+    pub fn make_creative(&mut self, name: String, content: String, creative_ref: u64, nft_cid: Option<String>) -> Creative {
     
         assert!(name != "", "Abort. Name is empty");
         assert!(name.len() <= 100, "Abort. Name is longer than 100 characters");
@@ -78,6 +76,7 @@ impl MetaAdsContract {
         let record_id = self.max_creative_id;
         let creative = Creative {
             record_id,
+            creative_ref,
             name,
             content,
             nft_cid,
@@ -101,7 +100,6 @@ impl MetaAdsContract {
         end_time: Timestamp, 
         publisher_id: AccountId, 
         ad_space_name: Option<String>,
-        creative_ref: Option<String>, 
         publisher_earn: Option<u64>, 
         show_kind: Option<String>, 
     ) -> Option<Presentation> {
@@ -141,7 +139,7 @@ impl MetaAdsContract {
                     publisher_account_id: publisher_id,
                     ad_space_name,
                     publisher_earn,
-                    creative_ref,
+                    creative_ref: Some(_creative.creative_ref),
                     show_kind,
                     entertainment: env::current_account_id(),
                     entertainment_fee: fee,

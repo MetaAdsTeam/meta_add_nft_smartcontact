@@ -40,7 +40,7 @@ Examples
 
 - Add creative
 
-   `near call subaccount.YOUR-NAME.testnet make_creative '{"name": "My Creative", "content": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gi", "nft_cid": $cid}' --accountId YOUR-NAME.testnet`
+   `near call subaccount.YOUR-NAME.testnet make_creative '{"name": "My Creative", "content": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gi", "creative_ref": $ref, "nft_cid": $cid}' --accountId YOUR-NAME.testnet`
 
 - Get a collection of creatives
 
