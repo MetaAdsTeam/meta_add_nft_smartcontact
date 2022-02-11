@@ -5,6 +5,7 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+// 0.001 NEAR
 const MIN_DEPOSIT: Balance = 1_000_000_000_000_000_000_000;
 
 setup_alloc!();
@@ -113,12 +114,12 @@ impl MetaAdsContract {
         assert!(end_time > start_time, "Abort. Start time must be less than End time");
         assert!(publisher_id != "", "Abort. Publisher is empty");
 
-        let deposit: Balance = env::attached_deposit();
-        assert!(deposit >= MIN_DEPOSIT, "Deposit is too small. Attached: {}, Required: {}", deposit, MIN_DEPOSIT);
-
         match self.creatives.get(&creative_id) {
             Some(_creative) => {
                 
+                let deposit: Balance = env::attached_deposit();
+                assert!(deposit >= MIN_DEPOSIT, "Deposit is too small. Attached: {}, Required: {}", deposit, MIN_DEPOSIT);
+
                 let advertiser_account_id = env::predecessor_account_id();
                 let owner_account_id = _creative.owner_account_id.clone();
                 assert_eq!(owner_account_id, advertiser_account_id, "Abort. Creative not available. Wrong account");
@@ -153,7 +154,9 @@ impl MetaAdsContract {
                 
                 Some(presentation)
             }
-            None => None
+            None => {
+                near_sdk::env::panic(b"Creative not found");
+            }
         }
     }
 
