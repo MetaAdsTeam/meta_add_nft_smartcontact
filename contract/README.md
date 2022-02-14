@@ -40,7 +40,7 @@ Examples
 
 - Add creative
 
-   `near call subaccount.YOUR-NAME.testnet make_creative '{"name": "My Creative", "content": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gi", "creative_ref": $ref, "nft_cid": $cid}' --accountId YOUR-NAME.testnet`
+   `near call subaccount.YOUR-NAME.testnet make_creative '{"name": "My Creative", "content": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gi", "creative_id": $id, "nft_cid": $cid}' --accountId YOUR-NAME.testnet`
 
 - Get a collection of creatives
 
@@ -52,11 +52,31 @@ Examples
 
 - Init presentation your creative
 
-   `near call subaccount.YOUR-NAME.testnet do_agreement '{"adspace_id": $sid, "creative_id": $сid, "start_time": $s_time, "end_time": $e_time, "publisher_id": "'$PublisherAccountId'"}' --accountId  YOUR-NAME.testnet --amount 0.1`
+   `near call subaccount.YOUR-NAME.testnet do_agreement '{"playback_id": $pid, "creative_id": $сid, "adspot_id": $aid, "start_time": $s_time, "end_time": $e_time}' --accountId  YOUR-NAME.testnet --amount 0.1`
+
+- Get a collection of presentations
+
+   `near view subaccount.YOUR-NAME.testnet fetch_all_presentations`
+
+- Get a presentation by id
+
+   `near view subaccount.YOUR-NAME.testnet fetch_presentation_by_id '{"id": $id}'`
+
+- Add AdSpot
+
+   `near call subaccount.YOUR-NAME.testnet make_adspot '{"name": "Ad Spot", "adspot_id": $id, "price": $price}' --accountId YOUR-NAME.testnet `
+
+- Get a collection of AdSpots
+
+   `near view subaccount.YOUR-NAME.testnet fetch_all_adspots`
+
+- Get a adspot by id
+
+   `near view subaccount.YOUR-NAME.testnet fetch_adspot_by_id '{"id": $id}'`
 
 - Transfer of funds to the publisher for presentation
 
-   `near call subaccount.YOUR-NAME.testnet transfer_funds '{"presentation_id": $pid}' --accountId  subaccount.YOUR-NAME.testnet`
+   `near call subaccount.YOUR-NAME.testnet transfer_funds '{"playback_id": $pid}' --accountId  subaccount.YOUR-NAME.testnet`   
 
 
   [smart contract]: https://docs.near.org/docs/develop/contracts/overview
