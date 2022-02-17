@@ -5,8 +5,8 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-// 1 NEAR
-const ONE_NEAR: Balance = 1_000_000_000_000_000_000_000_000;
+// 0.01 NEAR
+const SPOT_NEAR: Balance = 10_000_000_000_000_000_000_000;
 
 setup_alloc!();
 

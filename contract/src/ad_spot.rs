@@ -32,7 +32,7 @@ impl MetaAdsContract {
         let ad_spot = AdSpot {
             adspot_id,
             owner_account_id,
-            price: price * ONE_NEAR,
+            price: price * SPOT_NEAR,
             name,
             publisher_earn,
             show_kind,
