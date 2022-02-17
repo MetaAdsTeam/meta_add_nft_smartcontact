@@ -28,7 +28,7 @@ The "backend" code lives in the `/contract` and `nft-contract` folders. See the 
 Deploy
 ======
 
-Step 0: Install near-cli (optional)
+Install near-cli
 -------------------------------------
 
 [near-cli] is a command line interface (CLI) for interacting with the NEAR blockchain. It was installed to the local `node_modules` folder when you ran `yarn install`, but for best ergonomics you may want to install it globally:
