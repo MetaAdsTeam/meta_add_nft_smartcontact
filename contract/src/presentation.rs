@@ -42,55 +42,49 @@ impl MetaAdsContract {
         assert!(end_time > time, "Abort. End time is less than current time");
         assert!(end_time > start_time, "Abort. Start time must be less than End time");
 
-        match self.creatives.get(&creative_id) {
-            Some(_creative) => {
+        if let Some(creative) = self.creatives.get(&creative_id) {
 
-                match self.ad_spots.get(&adspot_id) {
+            if let Some(adspot) = self.ad_spots.get(&adspot_id) {
 
-                    Some(_adspot) => {
-                        
-                        let deposit: Balance = env::attached_deposit();
-                        assert!(deposit >= _adspot.price, "Deposit is too small. Attached: {}, Required: {}", deposit, _adspot.price);
+                let deposit: Balance = env::attached_deposit();
+                assert!(deposit >= adspot.price, "Deposit is too small. Attached: {}, Required: {}", deposit, adspot.price);
 
-                        let advertiser_account_id = env::predecessor_account_id();
-                        let owner_account_id = _creative.owner_account_id.clone();
-                        assert_eq!(owner_account_id, advertiser_account_id, "Abort. Creative not available. Wrong account");
+                let advertiser_account_id = env::predecessor_account_id();
+                let owner_account_id = creative.owner_account_id.clone();
+                assert_eq!(owner_account_id, advertiser_account_id, "Abort. Creative not available. Wrong account");
 
-                        let fee = deposit / 10;
+                let fee = deposit / 10;
 
-                        let presentation = Presentation {
-                            playback_id,
-                            adspot_id,
-                            creative_id,
-                            advertiser_cost: deposit.into(),
-                            start_time,
-                            end_time,
-                            transfered: false,
-                            advertiser_account_id: advertiser_account_id.clone(),
-                            publisher_account_id: _adspot.owner_account_id.clone(),
-                            ad_spot_name: _adspot.name.clone(),
-                            publisher_earn: _adspot.publisher_earn.clone(),
-                            show_kind: _adspot.show_kind.clone(),
-                            entertainment: env::current_account_id(),
-                            entertainment_fee: fee,
-                            status: String::from("signed")
-                        };
+                let presentation = Presentation {
+                    playback_id,
+                    adspot_id,
+                    creative_id,
+                    advertiser_cost: deposit.into(),
+                    start_time,
+                    end_time,
+                    transfered: false,
+                    advertiser_account_id: advertiser_account_id.clone(),
+                    publisher_account_id: adspot.owner_account_id.clone(),
+                    ad_spot_name: adspot.name.clone(),
+                    publisher_earn: adspot.publisher_earn.clone(),
+                    show_kind: adspot.show_kind.clone(),
+                    entertainment: env::current_account_id(),
+                    entertainment_fee: fee,
+                    status: String::from("signed")
+                };
 
-                        assert!(
-                            self.presentations.insert(&playback_id, &presentation).is_none(),
-                            "Presentation already exists"
-                        );
-                        
-                        Some(presentation)
-                    }
-                    None => {
-                        near_sdk::env::panic(b"Ad Spot not found");
-                    } 
-                }
-            }
-            None => {
-                near_sdk::env::panic(b"Creative not found");
-            }
+                assert!(
+                    self.presentations.insert(&playback_id, &presentation).is_none(),
+                    "Presentation already exists"
+                );
+                
+                Some(presentation)
+
+            } else {
+                near_sdk::env::panic(b"Ad Spot not found");
+            }    
+        } else {
+            near_sdk::env::panic(b"Creative not found");
         }
     }
 
